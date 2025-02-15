@@ -30,6 +30,23 @@ class Meal(models.Model):
         super().save(*args, **kwargs)
     def __str__(self):
         return self.name
+    def no_of_reviews(self):
+        """ Return the number of reviews for this meal """
+        review_list = Review.objects.filter(meal=self)
+        return review_list.count()
+
+    def average_rating(self):
+        """ Calculate and return the average rating for this meal """
+        review_list = Review.objects.filter(meal=self)
+        if review_list.exists():
+            total_rating = sum(review.rating for review in review_list)
+            return total_rating / review_list.count()
+        return 0
+
+            
+        
+        
+
 
 class Review(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

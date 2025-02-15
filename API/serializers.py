@@ -23,7 +23,7 @@ class MealSerializer(serializers.ModelSerializer):
     class Meta:
         model = Meal
         fields = [
-            'slug', 'name', 'description', 'price', 'image', 'category_slug',
+            'slug', 'name', 'description', 'price', 'image', 'category_slug','no_of_reviews', 'average_rating',
             'category', 'created_at',
         ]
         read_only_fields = ['slug',  'created_at']

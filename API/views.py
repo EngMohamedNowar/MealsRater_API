@@ -69,4 +69,4 @@ class ReviewDetailView(generics.RetrieveUpdateDestroyAPIView):
     def get_object(self):
         """جلب مراجعة معينة مع التأكد من أنها تخص المستخدم الحالي"""
         review = get_object_or_404(Review, pk=self.kwargs['pk'], user=self.request.user)
-        return review
+        return review 

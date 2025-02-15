@@ -3,7 +3,7 @@ from .models import Meal, Category, Review
 
 @admin.register(Meal)
 class MealAdmin(admin.ModelAdmin):
-    list_display = ('name', 'category', 'price','created_at')
+    list_display = ('name', 'category', 'price','created_at','average_rating')
     search_fields = ('name', 'category__name')
     prepopulated_fields = {'slug': ('name',)}
 
