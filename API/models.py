@@ -1,7 +1,36 @@
+from rest_framework.authtoken.models import Token
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.text import slugify
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.contrib.auth.models import AbstractUser
+from django.core.validators import MinLengthValidator ,MaxLengthValidator
+
+from project import settings
+
+class User(AbstractUser):
+    email = models.EmailField(unique=True)
+    date_of_birth = models.DateField(null=True, blank=True)
+    phone_number = models.CharField(
+        max_length=15,
+        unique=True,
+        null=False,
+        blank=False,
+        validators=[MinLengthValidator(11),MaxLengthValidator(12)],  # التأكد من أن طول الحقل لا يقل عن 11 حرفًا
+        help_text="Phone number must be exactly 11 or 12 characters long."
+    )
+    
+    GENDER_CHOICES = [ 
+        ('M', 'Male'),
+        ('F', 'Female'),
+        ('O', 'Other'),
+    ]
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, null=True, blank=True)
+    
+    def __str__(self):
+        return self.username
+
+    
 
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -43,30 +72,26 @@ class Meal(models.Model):
             return total_rating / review_list.count()
         return 0
 
-            
-        
-        
-
 
 class Review(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     meal = models.ForeignKey(Meal, on_delete=models.CASCADE, related_name="reviews")
+    slug = models.SlugField(unique=True, blank=True, null=True)
     rating = models.DecimalField(
-        max_digits=3,  # الحد الأقصى للأرقام (مثال: 5.0)
-        decimal_places=1,  # عدد المنازل العشرية
+        max_digits=3,
+        decimal_places=1,
         validators=[MinValueValidator(0), MaxValueValidator(5)]
     )
     comment = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    def save(self,*args, **kwargs): 
-        if self.rating > 5.0:
-            raise ValueError ("Rating must be between 0 and 5")
-        super().save(*args, **kwargs)
-
 
     class Meta:
         unique_together = ('user', 'meal')  # Prevent duplicate reviews by the same user
 
+    def save(self, *args, **kwargs):
+        if self.rating > 5.0:
+            raise ValueError("Rating must be between 0 and 5")
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"{self.user.username} - {self.meal.name} ({self.rating}★)"
-

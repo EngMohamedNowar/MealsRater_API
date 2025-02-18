@@ -1,9 +1,23 @@
+
 from rest_framework import serializers
 from .models import Meal, Category, Review
+from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+
+
+
+#user serializers
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = get_user_model()
+        fields = ('username', 'email', 'password', 'phone_number', 'date_of_birth')
+        extra_kwargs = {'password': {'write_only': True},'phone_number': {'required': True}}
+
 
 # ✅ CATEGORY SERIALIZER
 class CategorySerializer(serializers.ModelSerializer):
     total_meals = serializers.SerializerMethodField()
+
 
     class Meta:
         model = Category
