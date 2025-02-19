@@ -12,7 +12,6 @@ class User(AbstractUser):
     email = models.EmailField(unique=True)
     date_of_birth = models.DateField(null=True, blank=True)
     phone_number = models.CharField(
-        max_length=15,
         unique=True,
         null=False,
         blank=False,
@@ -23,7 +22,6 @@ class User(AbstractUser):
     GENDER_CHOICES = [ 
         ('M', 'Male'),
         ('F', 'Female'),
-        ('O', 'Other'),
     ]
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, null=True, blank=True)
     
